@@ -1,0 +1,552 @@
+<style>
+body{
+	background-color:black;
+}
+#background{
+	width: 800px;
+	height:260px;
+	background: url('background_blanka.gif');
+	background-size: cover;
+}
+#character1{
+	background: url('ken.png') 0px -80px;
+	width:70px;
+	height:80px;
+	position:absolute;
+}
+.power{
+	background: url('ken.png') 0px -330px;
+	width:70px;
+	height:80px;
+	position:fixed;
+}
+.power2{
+	background: url('ken2.png') 0px -330px;
+	width:70px;
+	height:80px;
+	position:absolute;
+	transform: scaleX(-1);
+}
+#character2{
+	background: url('ken2.png') 0px -80px;
+	width:70px;
+	height:80px;
+	position:absolute;
+	transform: scaleX(-1);
+}
+#healthbar1{
+	width:200px;
+	height:15px;
+	background-color:lightgreen;
+	border:3px solid green;
+	position:absolute;
+	top:30px;
+	left:100px;
+}
+#healthbar2{
+	width:200px;
+	height:15px;
+	background-color:pink;
+	border:3px solid red;
+	position:fixed;
+	top:30px;
+	left: 470px;
+}
+#healthpoints1{
+	width: 50px;
+	height: 20px;
+	background-color:white;
+	border:3px solid red;
+	position:fixed;
+	top: 28px;
+	left: 40px;
+	color: red;
+	font-size: 18px;
+	text-align: center;
+}
+#healthpoints2{
+	width: 50px;
+	height: 20px;
+	background-color: white;
+	border:3px solid red;
+	position:fixed;
+	top: 28px;
+	left: 710px;
+	color: red;
+	font-size: 18px;
+	text-align: center;
+}
+
+#powerTime{
+	width:230px;
+	height:15px;
+	background-color: red;
+	border:3px solid yellow;
+	position:fixed;
+	left: 100px;
+	top: 53px;
+}
+
+#powerTime2{
+	left: 470px;
+	width:230px;
+	height:15px;
+	background-color: red;
+	border:3px solid yellow;
+	position:fixed;
+	top: 53px;
+}
+
+
+</style>
+
+<div id='background'>
+	<div id='character1'>
+		<div id='power'> </div>
+		<div id='powerTime'></div>
+	</div>
+	<div id='character2'></div>
+		<div id='power2'> </div>
+		<div id='powerTime2'></div>
+
+	<div id='healthbar1'></div>
+	<div id='healthbar2'></div>
+	
+	<div id='healthpoints1'></div>
+	<div id='healthpoints2'></div>
+	
+</div>
+
+
+<script>
+	var action = 'STANDING';
+	var action2 = 'STANDING';
+	var which_frame = 0;
+	var which_framev2 =0;
+	var character1={
+		top: 175,
+		left: 40,
+		health: 100
+	}
+	var character2={
+		top: 175,
+		left: 600,
+		health: 100
+	}
+	var power=[];
+	var power2=[];
+	var powerTime =230;
+	var powerTime2 = 230;
+	var ctr =0;
+	var ctr2 =0;
+	function GameLoop()
+	{
+
+		displayCharacters();
+		displaypower();
+		PowerMove();
+		displayCharcter2();
+		displaypower2();
+		PowerMove2();
+		character2Move();
+		time();
+		time2();
+	}
+
+	setInterval(GameLoop, 90);
+
+
+	function character2Move(){
+
+		var distance = Math.abs(character1.left-character2.left);
+
+		if(distance>100){
+
+			character2.left -= 2;
+		}
+
+		if(character1.left < 200){
+			character2.left += 2;
+		}
+
+
+
+	}
+	function displayCharcter2(){
+
+		var distance = Math.abs(character1.left-character2.left);
+		
+		if(distance < 50){
+
+			var rand_attack = Math.floor((Math.random() * 7) + 1);
+			if(rand_attack < 2){
+				action2 = "KICK";
+			}
+			else if(rand_attack ==7){
+				action2 = 'POWER';
+			}
+			else{
+			action2 = 'PUNCH';
+			}
+		}
+
+		if(action2=='STANDING'){
+
+			document.getElementById('character2').style.background = "url('ken2.png') -"+which_framev2*70+"px -80px";
+			which_framev2 = which_framev2+1;
+			
+			if(which_framev2 >= 4)
+			{
+				which_framev2 = 0;
+			}
+
+		}
+		else if(action2 == 'PUNCH' ){
+			document.getElementById('character2').style.background = "url('ken2.png') -"+which_frame*70+"px -160px";
+			character1.health = character1.health - 1;
+				if(character1.health < 0){
+					character1.left = 40;
+					character2.left = 710;
+					character1.health = 100;
+					character2.health = 100;
+					which_framev2 = 0;
+					which_frame =0;
+					action1 = 'STANDING';
+					action2 = 'STANDING';
+				}
+
+			if(distance >= 50)
+			{
+				action2 = 'STANDING';
+			}
+		}
+		else if(action2 == 'KICK'){
+			document.getElementById('character2').style.background = "url('ken2.png') -"+which_frame*70+"px -560px";
+			which_framev2 = which_framev2 +1;
+				character1.health = character1.health - 1;
+				if(character1.health < 0){
+					character1.left = 40;
+					character2.left = 710;
+					character1.health = 100;
+					character2.health = 100;
+					which_frame = 0;
+					which_framev2 =0;
+					action1 = 'STANDING';
+					action2 = 'STANDING';
+				}
+
+			if (distance >= 50 || which_framev2 > 5){
+				action2 == 'STANDING';
+				which_framev2 = 0;
+			}
+		}
+		else if(action2=='POWER'){
+			if(ctr2 < 3){
+				ctr2++;
+				document.getElementById('character2').style.background = "url('ken2.png') -"+which_framev2*70+"px 0px";
+				which_framev2 = which_framev2+1;
+				power2.push({x: character2.left, y: character2.top});
+
+				if(which_framev2 >= 4)
+				{
+					which_framev2 = 0;
+					action2 = 'STANDING';
+				}
+			}
+			else{
+				action2 ='STANDING';
+			}
+
+		}
+		else if(action2 =='DOWN'){
+			document.getElementById('character2').style.background = "url('ken2.png') -"+which_frame*70+"px -725px";
+			which_framev2 = which_framev2+1;
+
+			if(which_framev2 >= 4)
+			{
+				which_framev2 = 0;
+				action2 = 'STANDING';
+			}
+		}
+
+	}
+
+
+	function PowerMove2(){
+		for(var i=0; i<power2.length; i++){
+					power2[i].x -= 10;
+						if(Math.abs(power2[i].x-character1.left)<20){
+								
+									power2[i] = power2[power2.length-1];
+									power2.pop();
+									character1.health = character1.health - 8;
+										if(character1.health < 0){
+												character1.left = 40;
+												character2.left = 710;
+												character1.health = 100;
+												character2.health = 100;
+												which_frame = 0;
+												which_framev2 =0;
+												action = 'STANDING';
+												action2 = 'STANDING';
+										}
+						}
+						else if(power2[i].x < 0){
+							power2[i] = power2[power2.length-1];
+							power2.pop();
+						}
+		}
+	}
+
+	function time2(){
+		if(ctr2 == 3){
+		document.getElementById('powerTime2').style.left = 470;
+		document.getElementById('powerTime2').style.top = 53;
+		document.getElementById('powerTime2').style.width = powerTime2 -= 5;
+		}
+		if(powerTime2 ==0){
+			ctr2 =0;
+			powerTime2 = 200;
+			document.getElementById('powerTime2').style.left = -100;
+		}
+	}
+
+
+	function displaypower2(){
+		var output = "";
+			for(var i=0; i<power2.length; i++){
+					output = output + "<div class = 'power2' style = 'top:" +(power2[i].y +20)+ "px; left:" +(power2[i].x+5)+ "px;'></div>";
+
+			}
+		document.getElementById("power2").innerHTML = output;
+	}
+
+	
+	function displaypower(){
+		var output = "";
+			for(var i=0; i<power.length; i++){
+					output = output + "<div class = 'power' style = 'top:" +(power[i].y +20)+ "px; left:" +(power[i].x+5)+ "px;'></div>";
+			}
+		document.getElementById("power").innerHTML = output;
+	}
+
+	function time(){
+		if(ctr == 3){
+		document.getElementById('powerTime').style.left = 100;
+		document.getElementById('powerTime').style.top = 53;
+		document.getElementById('powerTime').style.width = powerTime -= 5;
+		}
+		if(powerTime ==0){
+			ctr =0;
+			powerTime = 200;
+			document.getElementById('powerTime').style.left = -100;
+		}
+	}
+
+	function PowerMove(){
+			for(var i=0; i<power.length; i++){
+					power[i].x += 10;
+						for(var j =0; j< power2.length; j++){
+							if (Math.abs(power[i].x - power2[j].x)<20){
+								power[i] = power[power.length-1];
+								power.pop();
+								power2[j] = power2[power2.length-1];
+								power2.pop();
+								PowerMove();
+							}
+						}
+						if(power.length>0){
+							if(Math.abs(power[i].x-character2.left)<20){
+									character2.health = character2.health - 8;
+										if(character2.health < 0){
+												character1.left = 40;
+												character2.left = 710;
+												character1.health = 100;
+												character2.health = 100;
+												which_frame = 0;
+												action = 'STANDING';
+												action2 = 'STANDING';
+										}
+										else{
+											if(Math.abs(character1.left-character2.left)>200){
+											action2 = 'POWER';
+											}
+											else{
+											action2 = 'DOWN';
+											}	
+										}
+										power[i] = power[power.length-1];
+										power.pop();
+											
+							}
+							else if(power[i].x > 750){
+								power[i] = power[power.length-1];
+								power.pop();
+							}
+						}
+				}
+			}
+
+	
+	function displayCharacters()
+	{
+		document.getElementById('character1').style.top = character1.top;
+		document.getElementById('character1').style.left = character1.left;
+
+		document.getElementById('character2').style.top = character2.top;
+		document.getElementById('character2').style.left = character2.left;
+
+		document.getElementById('healthbar1').style.width = character1.health*2.3;
+		document.getElementById('healthbar2').style.width = character2.health*2.3;
+
+		
+		document.getElementById('healthpoints1').innerHTML = character1.health;
+		document.getElementById('healthpoints2').innerHTML = character2.health;
+
+
+		if(action == 'STANDING')
+		{	
+			document.getElementById('character1').style.background = "url('ken.png') -"+which_frame*70+"px -80px";
+			which_frame = which_frame+1;
+			
+			if(which_frame >= 4)
+			{
+				which_frame = 0;
+			}
+		}
+		
+		else if(action == 'PUNCH')
+		{
+			if(which_frame == 2 && character1.left > character2.left - 50 && character1.left < character2.left + 10)
+			{
+				character2.health = character2.health - 8;
+				if(character2.health < 0){
+					character1.left = 40;
+					character2.left = 710;
+					character1.health = 100;
+					character2.health = 100;
+					which_frame = 0;
+					action = 'STANDING';
+				}
+			}
+			document.getElementById('character1').style.background = "url('ken.png') -"+which_frame*70+"px -160px";
+			which_frame = which_frame+1;
+
+			if(which_frame >= 3)
+			{
+				which_frame = 0;
+				action = 'STANDING';
+			}
+		}
+		else if(action == 'ROUND_KICK')
+		{
+			if(which_frame == 2 && character1.left > character2.left - 50 && character1.left < character2.left + 10)
+			{
+				character2.health = character2.health - 8;
+
+				if(character2.health < 0){
+					character1.left = 40;
+					character2.left = 710;
+					character1.health = 100;
+					character2.health = 100;
+					which_frame = 0;
+					action = 'STANDING';
+				}
+			}
+
+			document.getElementById('character1').style.background = "url('ken.png') -"+which_frame*70+"px -560px";
+			which_frame = which_frame+1;
+
+			if(which_frame >= 5)
+			{
+				which_frame = 0;
+				action = 'STANDING';
+			}
+		}
+		
+		else if(action == 'POWER')
+		{
+
+			document.getElementById('character1').style.background = "url('ken.png') -"+which_frame*70+"px 0px";
+			which_frame = which_frame+1;
+
+			if(which_frame >= 4)
+			{
+				which_frame = 0;
+				action = 'STANDING';
+			}
+		}
+
+		else if(action == 'JUMP')
+		{
+
+			document.getElementById('character1').style.background = "url('ken.png') -"+which_frame*70+"px -640px";
+			which_frame = which_frame+1;
+
+
+			if(which_frame >= 7)
+			{
+				which_frame = 0;
+				action = 'STANDING';
+			}
+		}
+		else if(action == 'DOWN')
+		{
+
+			document.getElementById('character1').style.background = "url('ken.png') -"+which_frame*70+"px -725px";
+			which_frame = which_frame+1;
+
+			if(which_frame >= 1)
+			{
+				which_frame = 0;
+				action = 'STANDING';
+			}
+		}
+
+	}
+
+
+	document.onkeydown = function(e)
+	{
+		if(e.keyCode == 37 && character1.left > 0)
+		{
+			
+			character1.left = character1.left-10;
+		}
+		else if(e.keyCode == 39 && character1.left < 800)
+		{
+			if(character1.left == character2.left){
+			}
+			else{
+			character1.left = character1.left+10;
+			}
+		}
+
+		else if(e.keyCode == 65)
+		{
+			action = 'PUNCH';
+		}
+		else if(e.keyCode == 83)
+		{
+			action = 'ROUND_KICK';
+		}
+		else if(e.keyCode == 68)
+		{
+			if(ctr < 3){
+				action = 'POWER';
+				power.push({x: character1.left, y: character1.top});
+				ctr++;
+			}
+		}
+		else if(e.keyCode == 38)
+		{
+			action = 'JUMP';
+		}
+		else if(e.keyCode ==40){
+
+			action = 'DOWN';
+		}
+			which_frame = 0;
+	}
+	displayCharacters();
+</script>
